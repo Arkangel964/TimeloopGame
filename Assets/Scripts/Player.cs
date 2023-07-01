@@ -5,11 +5,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float speed;
     public Camera mainCamera;
     public LineRenderer lineRenderer;
     public DistanceJoint2D distanceJoint2D;
     public GameObject grappleArea;
+    public float speed;
+    public float maxSpeed;
+    public float acceleration;
     public float grappleDistanceX;
     public float grappleDistanceY;
     public float jumpforce;
@@ -51,15 +53,37 @@ public class Player : MonoBehaviour
             if (Input.GetKey(KeyCode.A))
             {
                 facing = facingDirection.left;
-                transform.Translate(Vector3.right * Time.deltaTime * speed);
+                if (speed - acceleration >= -maxSpeed)
+                {
+                    speed -= acceleration;
+                }
                 grappleArea.transform.position = new Vector3(transform.position.x - grappleDistanceX, transform.position.y + grappleDistanceY, transform.position.z);
             }
             if (Input.GetKey(KeyCode.D))
             {
                 facing = facingDirection.right;
-                transform.Translate(Vector3.right * Time.deltaTime * speed);
+                if (speed + acceleration <= maxSpeed)
+                {
+                    speed += acceleration;
+                }
                 grappleArea.transform.position = new Vector3(transform.position.x + grappleDistanceX, transform.position.y + grappleDistanceY, transform.position.z);
             }
+            if (Input.GetKey(KeyCode.A) == Input.GetKey(KeyCode.D))
+            {
+                if (speed > 0)
+                {
+                    speed -= 2 * acceleration;
+                }
+                if (speed < 0)
+                {
+                    speed += 2 * acceleration;
+                }
+                if (Math.Abs(speed) < 2 * acceleration)
+                {
+                    speed = 0;
+                }
+            }
+            transform.Translate(Vector3.right * Time.deltaTime * speed);
         }
         
         
@@ -77,12 +101,17 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
             canDash = false;
-            if(facing == facingDirection.left)
+            Debug.Log(Math.Abs(GetComponent<Rigidbody2D>().velocity.x));
+            if (Math.Abs(GetComponent<Rigidbody2D>().velocity.x) < 10)
             {
-                GetComponent<Rigidbody2D>().AddForce(Vector3.left * dashforce);
-            } else
-            {
-                GetComponent<Rigidbody2D>().AddForce(Vector3.right * dashforce);
+                if (facing == facingDirection.left)
+                {
+                    GetComponent<Rigidbody2D>().AddForce(Vector3.left * dashforce);
+                }
+                else
+                {
+                    GetComponent<Rigidbody2D>().AddForce(Vector3.right * dashforce);
+                }
             }
             GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, 0);
             GetComponent<Rigidbody2D>().gravityScale = 0;
@@ -90,19 +119,10 @@ public class Player : MonoBehaviour
         }
         upwardsVelocity = GetComponent<Rigidbody2D>().velocity.y;
         forwardsVelocity = GetComponent<Rigidbody2D>().velocity.x;
-        if (forwardsVelocity > 30)
-        {
-            forwardsVelocity = 30;
-        } else if (forwardsVelocity < -30)
-        {
-            forwardsVelocity = -30;
-        }
-        if (upwardsVelocity > 30)
-        {
-            upwardsVelocity = 30;
-        }
+        
         GetComponent<Rigidbody2D>().velocity = new Vector2(forwardsVelocity, upwardsVelocity);
     }
+    
 
     private IEnumerator Dash()
     {
@@ -115,11 +135,19 @@ public class Player : MonoBehaviour
         GetComponent<Rigidbody2D>().gravityScale = 9;
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Ground")
         {
             canJump = true;
+            
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Ground")
+        {
             canDash = true;
         }
     }

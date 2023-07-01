@@ -31,7 +31,7 @@ public class Camera : MonoBehaviour
         {
             offset.y += 10;
         }
-        if (player.GetComponent<Rigidbody2D>().velocity.y < -30)
+        if (player.GetComponent<Rigidbody2D>().velocity.y < -20)
         {
             offset.y -= 10;
         }
