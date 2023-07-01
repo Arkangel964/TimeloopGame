@@ -13,6 +13,21 @@ public class Grappling : MonoBehaviour
         grappleTarget = null;
     }
 
+    public void Reset()
+    {
+        isGrappling = false;
+        player.GetComponent<DistanceJoint2D>().enabled = false;
+        player.GetComponent<LineRenderer>().enabled = false;
+        if (grappleTarget)
+        {
+            grappleTarget.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+        player.GetComponent<Player>().canMove = true;
+        grappleTarget = null;
+        player.GetComponent<Player>().canJump = false;
+        player.GetComponent<Rigidbody2D>().gravityScale = 9;
+    }
+
     // Update is called once per frame
     void Update()
     {

@@ -44,11 +44,13 @@ public class Player : MonoBehaviour
     private void Reset()
     {
         transform.position = startPos;
-        canJump = true;
-        canDash = true;
-        canMove = true;
+        canJump = false;
+        canDash = false;
+        canMove = false;
         distanceJoint2D.enabled = false;
         facing = facingDirection.right;
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        speed = 0;
     }
 
     // Update is called once per frame
