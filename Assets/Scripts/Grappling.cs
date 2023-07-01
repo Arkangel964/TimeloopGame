@@ -21,7 +21,7 @@ public class Grappling : MonoBehaviour
             player.GetComponent<LineRenderer>().SetPosition(0, player.transform.position);
             player.GetComponent<LineRenderer>().SetPosition(1, grappleTarget.transform.position);
         }
-        if (Input.GetKeyDown(KeyCode.E) && grappleTarget != null)
+        if (Input.GetKeyDown(KeyCode.Mouse1) && grappleTarget != null)
         {
             isGrappling = true;
             player.GetComponent<DistanceJoint2D>().enabled = true;
@@ -29,7 +29,7 @@ public class Grappling : MonoBehaviour
             player.GetComponent<LineRenderer>().enabled = true;
             player.GetComponent<Player>().canMove = false;
         }
-        if (isGrappling && (Input.GetKeyUp(KeyCode.E) || Input.GetKeyDown(KeyCode.Space)))
+        if (isGrappling && (Input.GetKeyUp(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.Space)))
         {
             isGrappling = false;
             player.GetComponent<DistanceJoint2D>().enabled = false;
@@ -47,7 +47,7 @@ public class Grappling : MonoBehaviour
                 player.GetComponent<Rigidbody2D>().AddForce(Vector3.up * player.GetComponent<Player>().jumpforce);
             }
         }
-        
+        player.GetComponent<Animator>().SetBool("isGrappling", isGrappling);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

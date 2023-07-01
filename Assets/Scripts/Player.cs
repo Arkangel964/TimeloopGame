@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     public DistanceJoint2D distanceJoint2D;
     public GameObject grappleArea;
     public Vector3 startPos;
+    public Animator animator;
     public float speed;
     public float maxSpeed;
     public float acceleration;
@@ -37,6 +38,7 @@ public class Player : MonoBehaviour
         canMove = true;
         distanceJoint2D.enabled = false;
         facing = facingDirection.right;
+        animator = GetComponent<Animator>();
     }
 
     private void Reset()
@@ -58,6 +60,7 @@ public class Player : MonoBehaviour
             if (Input.GetKey(KeyCode.A))
             {
                 facing = facingDirection.left;
+                GetComponent<SpriteRenderer>().flipX = true;
                 if (speed - acceleration >= -maxSpeed)
                 {
                     speed -= acceleration;
@@ -67,6 +70,7 @@ public class Player : MonoBehaviour
             if (Input.GetKey(KeyCode.D))
             {
                 facing = facingDirection.right;
+                GetComponent<SpriteRenderer>().flipX = false;
                 if (speed + acceleration <= maxSpeed)
                 {
                     speed += acceleration;
@@ -88,10 +92,11 @@ public class Player : MonoBehaviour
                     speed = 0;
                 }
             }
+            animator.SetFloat("Speed", Math.Abs(speed));
             transform.Translate(Vector3.right * Time.deltaTime * speed);
         }
-        
-        
+        animator.SetBool("isGrounded", canJump);
+
         if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
             canJump = false;
@@ -123,8 +128,10 @@ public class Player : MonoBehaviour
             StartCoroutine(Dash());
         }
         upwardsVelocity = GetComponent<Rigidbody2D>().velocity.y;
+        animator.SetFloat("Jump", upwardsVelocity);
         forwardsVelocity = GetComponent<Rigidbody2D>().velocity.x;
-        
+        animator.SetFloat("Dash", Math.Abs(forwardsVelocity));
+
         GetComponent<Rigidbody2D>().velocity = new Vector2(forwardsVelocity, upwardsVelocity);
     }
     
