@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public LineRenderer lineRenderer;
     public DistanceJoint2D distanceJoint2D;
     public GameObject grappleArea;
+    public Vector3 startPos;
     public float speed;
     public float maxSpeed;
     public float acceleration;
@@ -26,9 +27,21 @@ public class Player : MonoBehaviour
     public float dashAirTime;
     public float horizontalSpeedCap;
     public float verticalSpeedCap;
+
     // Start is called before the first frame update
     void Start()
     {
+        startPos = transform.position;
+        canJump = true;
+        canDash = true;
+        canMove = true;
+        distanceJoint2D.enabled = false;
+        facing = facingDirection.right;
+    }
+
+    private void Reset()
+    {
+        transform.position = startPos;
         canJump = true;
         canDash = true;
         canMove = true;
@@ -41,14 +54,6 @@ public class Player : MonoBehaviour
     {
         if (canMove)
         {
-            if (Input.GetKey(KeyCode.W))
-            {
-                //look up? idk
-            }
-            if (Input.GetKey(KeyCode.S))
-            {
-                //crouch
-            }
             //TODO make it so that the player doesn't hit max speed immediately
             if (Input.GetKey(KeyCode.A))
             {

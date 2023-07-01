@@ -41,6 +41,7 @@ public class Grappling : MonoBehaviour
             player.GetComponent<Player>().canMove = true;
             grappleTarget = null;
             player.GetComponent<Player>().canJump = false;
+            player.GetComponent<Rigidbody2D>().gravityScale = 9;
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 player.GetComponent<Rigidbody2D>().AddForce(Vector3.up * player.GetComponent<Player>().jumpforce);
